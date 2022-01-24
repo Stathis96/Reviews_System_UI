@@ -21,7 +21,40 @@
             </q-tabs>
             <q-separator />
 
-            
+            <q-tab-panels v-model="tab" animated>
+              <q-tab-panel name="active">
+                <EmployeeItem
+                  :interns="result"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterns"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="employed">
+                <EmployeeItem
+                  :interns="result"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterns"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="dismissed">
+                <EmployeeItem
+                  :interns="result"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterns"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="standby">
+                <EmployeeItem
+                  :interns="result"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterns"
+                />
+              </q-tab-panel>
+
+            </q-tab-panels>
           </q-card>
           </div>
   </div>
@@ -41,12 +74,30 @@ export default defineComponent({
   },
   setup () {
     const tab = ref('active')
+    const { result, fetchInterns } = useFetchInterns(tab)
+    // const { result, fetchInterns } = useFetchInterns('ACTIVE')
+    // const { result: employed, fetchInterns: employedInterns } = useFetchInterns('EMPLOYED')
+    // const { result: dismissed, fetchInterns: dismissedInterns } = useFetchInterns('DISMISSED')
+    // const { result: standby, fetchInterns: standbyInterns } = useFetchInterns('STANDBY')
 
-
-
+    const handleAllInterns = async () => { // to use for all emit handling
+      await fetchInterns()
+      // await employedInterns()
+      // await dismissedInterns()
+      // await standbyInterns()
+    }
 
     return {
-      tab
+      tab,
+      result,
+      fetchInterns,
+      // employed,
+      // employedInterns,
+      // dismissed,
+      // dismissedInterns,
+      // standby,
+      // standbyInterns,
+      handleAllInterns
     }
   }
 })
