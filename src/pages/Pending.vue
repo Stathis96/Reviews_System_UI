@@ -21,6 +21,38 @@
             </q-tabs>
             <q-separator />
 
+            <q-tab-panels v-model="tab" animated>
+              <q-tab-panel name="pending">
+                <InterviewItem
+                  :interviews="pendingResult"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterviews"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="accepted">
+                <InterviewItem
+                  :interviews="pendingResult"
+                  @refetchinterviews="handleAllInterviews"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="rejected">
+                <InterviewItem
+                  :interviews="pendingResult"
+                  @refetchinterviews="handleAllInterviews"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="standby">
+                <InterviewItem
+                  :interviews="pendingResult"
+                  :canShowActions="true"
+                  @refetchinterviews="handleAllInterviews"
+                />
+              </q-tab-panel>
+
+            </q-tab-panels>
           </q-card>
           </div>
   </div>
@@ -43,9 +75,30 @@ export default defineComponent({
     watch(tab, () => {
       console.log('selection value changed to : ', tab.value)
     })
+    const { pendingResult, fetchInterviews } = useFetchPendingInterviews(tab)
+    // const { pendingResult, fetchInterviews } = useFetchPendingInterviews('PENDING')
+    // const { pendingResult: accepted, fetchInterviews: acceptedInterviews } = useFetchPendingInterviews('ACCEPTED')
+    // const { pendingResult: rejected, fetchInterviews: rejectedInterviews } = useFetchPendingInterviews('REJECTED')
+    // const { pendingResult: standby, fetchInterviews: standbyInterviews } = useFetchPendingInterviews('STANDBY')
+
+    const handleAllInterviews = async () => { // to use for all emit handling
+      await fetchInterviews()
+      // await acceptedInterviews()
+      // await rejectedInterviews()
+      // await standbyInterviews()
+    }
 
     return {
-      tab
+      tab,
+      pendingResult,
+      fetchInterviews,
+      handleAllInterviews
+      // accepted,
+      // acceptedInterviews,
+      // rejected,
+      // rejectedInterviews,
+      // standby,
+      // standbyInterviews,
     }
   }
 })
