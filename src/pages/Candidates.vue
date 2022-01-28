@@ -25,6 +25,50 @@
             </q-tabs>
             <q-separator />
 
+            <q-tab-panels v-model="tab" animated>
+              <q-tab-panel name="all">
+                <AllCandidatesItem
+                  :candidates="result"
+                  :canShowActions="true"
+                  :propPagination="pagination"
+                  @fetchingPaginatedData ="fetchingPaginatedData"
+                  @refetchcandidates="handleAllCandidates"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="pending">
+                <CandidateItem
+                  :candidates="pending"
+                  :canShowActions="true"
+                  @refetchcandidates="handleAllCandidates"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="accepted">
+                <CandidateItem
+                  :candidates="pending"
+                  :canShowActions="true"
+                  @refetchcandidates="handleAllCandidates"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="rejected">
+               <CandidateItem
+                  :candidates="pending"
+                  :canShowActions="true"
+                  @refetchcandidates="handleAllCandidates"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="standby">
+                <CandidateItem
+                  :candidates="pending"
+                  :canShowActions="true"
+                  @refetchcandidates="handleAllCandidates"
+                />
+              </q-tab-panel>
+
+            </q-tab-panels>
           </q-card>
           </div>
   </div>
@@ -49,12 +93,70 @@ export default defineComponent({
     AddCandidateDialog
   },
   setup () {
+    const AddCandidateDialogRef = ref(null)
 
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 5,
+      rowsNumber: 20,
+      filter: ''
+    })
+
+    const getCandidatesData = computed(() => {
+      return {
+        page: pagination.value.page,
+        limit: pagination.value.rowsPerPage,
+        filter: pagination.value.filter
+      }
+    })
+
+    const fetchingPaginatedData = (page: number, limit: number, filter: string) => {
+      // console.log('im here.', page, limit, 'filter given : ', filter)
+      pagination.value.page = page
+      pagination.value.rowsPerPage = limit
+      pagination.value.filter = filter
+    }
+
+    const { result, fetchCandidates, total } = useFetchCandidates(getCandidatesData)
+    watch(total, () => {
+      pagination.value.rowsNumber = total.value
+    })
     const tab = ref('all')
+    // watch(tab, () => {
+    //   console.log('selection value changed to : ', tab.value)
+    // })
+    const { pendingResult: pending, fetchCandidates: pendingCandidates } = useFetchPendingCandidates(tab)
+    // const { pendingResult: pending, fetchCandidates: pendingCandidates } = useFetchPendingCandidates('PENDING')
+    // const { pendingResult: accepted, fetchCandidates: acceptedCandidates } = useFetchPendingCandidates('ACCEPTED') // to do with one call
+    // const { pendingResult: rejected, fetchCandidates: rejectedCandidates } = useFetchPendingCandidates('REJECTED')
+    // const { pendingResult: standby, fetchCandidates: standbyCandidates } = useFetchPendingCandidates('STANDBY')
 
+    const handleAllCandidates = async () => { // to use for all emit handling
+      await fetchCandidates()
+      await pendingCandidates()
+      // await acceptedCandidates()
+      // await rejectedCandidates()
+      // await standbyCandidates()
+    }
 
     return {
-      tab
+      tab,
+      AddCandidateDialogRef,
+      result,
+      fetchCandidates,
+      total,
+      pending,
+      pendingCandidates,
+      // accepted,
+      // acceptedCandidates,
+      // rejected,
+      // rejectedCandidates,
+      // standby,
+      // standbyCandidates,
+      handleAllCandidates,
+      getCandidatesData,
+      pagination,
+      fetchingPaginatedData
     }
   }
 })
