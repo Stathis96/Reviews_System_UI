@@ -22,6 +22,19 @@
             </q-tabs>
             <q-separator />
 
+            <q-tab-panels v-model="tab" animated>
+              <q-tab-panel name="scheduled">
+                <InterviewItem
+                  :interviews="result"
+                />
+              </q-tab-panel>
+
+              <q-tab-panel name="old">
+                <InterviewItem
+                  :interviews="oldresult"
+                />
+              </q-tab-panel>
+
             </q-tab-panels>
           </q-card>
           </div>
@@ -32,15 +45,30 @@
 <script lang='ts'>
 import { defineComponent, ref } from 'vue'
 
+import { useFetchInterviews, useFetchOldInterviews } from 'src/hooks/useFetchInterviews'
+
+import InterviewItem from '../components/InterviewItem.vue'
+import AddDialog from '../components/AddDialog.vue'
+
 export default defineComponent({
   name: 'Interviews',
   components: {
+    InterviewItem,
+    AddDialog
   },
   setup () {
+    const addDialogRef = ref(null)
+    const { result, loading, fetchInterviews } = useFetchInterviews()
+    const { oldresult, fetchInterviews2 } = useFetchOldInterviews()
 
     return {
-      tab: ref('scheduled')
-
+      tab: ref('scheduled'),
+      result,
+      fetchInterviews,
+      oldresult,
+      fetchInterviews2,
+      loading,
+      addDialogRef
     }
   }
 })
