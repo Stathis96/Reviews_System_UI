@@ -96,3 +96,48 @@ export function useFetchUsers () {
     fetchUsers
   }
 }
+
+export function useFetchPendingCandidates (status: Ref<string>) {
+  const pendingResult = ref<Candidate[]>([])
+  const loading = ref(false)
+
+  const fetchCandidates = async () => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(getCandidatesByStatus),
+          variables: {
+            getCandidatesByStatus: unref(status)
+          }
+        }
+      }) as unknown as GraphQLResponse <{ statusCandidates: Candidate[]}>
+
+      if (response.data.data) {
+        // console.log(response.data.data.pendingInterviews)
+        pendingResult.value = response.data.data.statusCandidates
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  onMounted(async () => {
+    await fetchCandidates().catch(e => console.log(e))
+  })
+  watch(status, async () => {
+    // console.log('watcher')
+    // console.log('val:', val)
+    // console.log('prev', prev)
+    await fetchCandidates()
+  })
+
+  return {
+    pendingResult,
+    loading,
+    fetchCandidates
+  }
+}
