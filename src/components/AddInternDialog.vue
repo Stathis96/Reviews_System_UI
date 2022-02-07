@@ -176,6 +176,66 @@ export default defineComponent({
       endInternship: '2022-01-01'
     })
 
+    // watch(createdInternData.value, () => {
+    //   console.log('CHANGED EXPERIENCE:', typeof (createdInternData.value.experience))
+    //   console.log('CHANGED position:', typeof (createdInternData.value.position))
+
+    //   console.log('CHANGED school:', typeof (createdInternData.value.school))
+    // })
+
+    const { createIntern } =
+    useInternMutations(createdInternData.value)
+
+    const { updateIntern } =
+    useInternUpdateMutations(createdInternData.value)
+    const $q = useQuasar()
+
+    const submitAdd = () => {
+      if (rowId.value === '') {
+        createIntern().then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully created the candidate.'
+            })
+            emit('refetchinterviews') // getting handled in Old-New
+            emit('refetchinterviews2') // getting handled in Old-New
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          // console.log('rowId', rowId.value)
+          // console.log('CREATEDinteviewdata from inside submit is ', createdInternData)
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      } else {
+        updateIntern(rowId.value).then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully created the candidate.'
+            })
+            // console.log('rowId is', rowId.value)
+            // console.log('UPDATEDdata from inside is ', createdInternData)
+            emit('refetchinterviews') // getting handled in Old-New
+            emit('refetchinterviews2') // getting handled in Old-New
+            emit('refetchpendinginterviews') // getting handled in EmployeeItem
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      }
+    }
     const cancelAll = () => {
       open.value = false
       createdInternData.value.fullname = ''
@@ -207,7 +267,12 @@ export default defineComponent({
       open,
       openDialog,
       cancelAll,
-      createdInternData
+      createdInternData,
+      createIntern,
+      updateIntern,
+      submitAdd,
+      result,
+      rowId
     }
   }
 })
