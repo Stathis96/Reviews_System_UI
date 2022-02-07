@@ -181,6 +181,11 @@ export default defineComponent({
       open.value = true
     }
 
+    const getCandidatesData = ref<PaginationInputData>({
+      page: 1,
+      limit: 0,
+      filter: ''
+    })
 
     const { result, fetchCandidates } = useFetchCandidates(getCandidatesData)
 
@@ -202,6 +207,50 @@ export default defineComponent({
     const { updateInterview } =
     useInterviewUpdateMutations(createdInterviewData.value)
 
+    const submitAdd = () => {
+      if (rowId.value === '') {
+        createInterview().then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully created the interview.'
+            })
+            emit('refetchinterviews') // getting handled in Interviews
+            emit('refetchinterviews2') // getting handled in Interviews
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          // console.log('rowId', rowId.value)
+          // console.log('CREATEDinteviewdata from inside submit is ', createdInterviewData)
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      } else {
+        updateInterview(rowId.value).then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully updated the interview.'
+            })
+            emit('refetchinterviews') // getting handled in Interviews
+            emit('refetchinterviews2') // getting handled in Interviews
+            emit('refetchpendinginterviews') // getting handled in InterviewItem
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      }
+    }
     const cancelAll = () => {
       open.value = false
       createdInterviewData.value.candidateId = ''
@@ -224,7 +273,16 @@ export default defineComponent({
       accepted: ref(false),
       rejected: ref(false),
       standby: ref(false),
-      createdInterviewData
+      createdInterviewData,
+      createInterview,
+      updateInterview,
+      submitAdd,
+      result,
+      rowId,
+      ownerId,
+      AddCandidateDialogRef,
+      fetchCandidates,
+      getCandidatesData
     }
   }
 })
