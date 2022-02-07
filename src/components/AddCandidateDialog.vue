@@ -125,6 +125,48 @@ export default defineComponent({
       employmentType: 'fulltime'
     })
 
+    const { createCandidate } =
+    useCandidateMutations(createdCandidateData.value)
+
+    const { updateCandidate } =
+    useCandidateUpdateMutations(createdCandidateData.value)
+
+    const $q = useQuasar()
+    const submitAdd = () => {
+      if (rowId.value === '') {
+        createCandidate().then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully created the candidate.'
+            })
+            emit('refetchcandidates') // getting handled in Candidates
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      } else {
+        updateCandidate(rowId.value).then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully updated the candidate.'
+            })
+            emit('refetchcandidates') // getting handled in Candidates
+            emit('refetchupdatedcandidates') // getting handled in CandidateItem
+          }
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      }
+    }
     const cancelAll = () => {
       open.value = false // kinda useless , working with just the option v-close-popup but whatever
       createdCandidateData.value.name = ''
@@ -158,7 +200,14 @@ export default defineComponent({
       createdCandidateData,
       createCandidate,
       updateCandidate,
-      submitAdd
+      submitAdd,
+      isValidEmail,
+      isValidName,
+      isValidMobile,
+      rowId,
+      posOptions,
+      statOptions,
+      emplOptions
     }
   }
 })
