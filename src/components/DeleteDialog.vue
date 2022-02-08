@@ -59,27 +59,51 @@ export default defineComponent({
 
     const submitDelete = () => {
       if (props.typeOfProp === 'Interview') {
+        console.log('trying to delete an interview ')
         deleteInterview(neededId.value).then((res) => {
           console.log('response is ', res)
+          callSuccessMsg(res)
         }).catch((err) => {
           alert(err)
         })
       } else if (props.typeOfProp === 'Intern') {
         deleteIntern(neededId.value).then((res) => {
+          console.log('trying to delete an intern ')
+          callSuccessMsg(res)
         }).catch((err) => {
           alert(err)
         })
       } else if (props.typeOfProp === 'Review') {
         deleteReview(neededId.value).then((res) => {
+          console.log('trying to delete a review ')
+          callSuccessMsg(res)
         }).catch((err) => {
           alert(err)
         })
       } else {
+        console.log('trying to delete an candidate ')
         deleteCandidate(neededId.value).then((res) => {
+          callSuccessMsg(res)
         }).catch((err) => {
           alert(err)
         })
       }
+    }
+
+    const callSuccessMsg = (res: string|undefined) => {
+      if (!res) {
+        $q.notify({
+          type: 'positive',
+          message: 'Successfully deleted the ' + props.typeOfProp + '.'
+        })
+        emit('refetching')
+      } else {
+        $q.notify({
+          type: 'negative',
+          message: res
+        })
+      }
+      cancelAll()
     }
 
     return {
