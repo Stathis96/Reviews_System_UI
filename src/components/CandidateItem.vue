@@ -8,6 +8,13 @@
       dark
       bordered
     >
+      <template v-slot:top-right>
+        <q-input dense debounce="300" v-model="filter" placeholder="Search" class="bg-light-blue-2" filled >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
 
         <template v-slot:body-cell-selectActions="send">
           <q-td  class="flex flex-center">
@@ -40,22 +47,41 @@
 
     </q-table>
   </div>
+   <AddCandidateDialog ref="AddCandidateDialogRef" @refetchupdatedcandidates="refetchcandidates"/>
+   <DeleteDialog ref="deleteDialogRef"
+    :typeOfProp="'Candidate'"
+    @refetching="refetchcandidates"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from 'vue'
 
+import AddCandidateDialog from '../components/AddCandidateDialog.vue'
+import DeleteDialog from '../components/DeleteDialog.vue'
+import Candidate from 'src/interfaces/Candidate'
 
 export default defineComponent({
   name: 'InterviewItem',
   emits: ['refetchcandidates'],
   components: {
+    AddCandidateDialog,
+    DeleteDialog
   },
   props: {
+    candidates: {
+      type: [Object] as PropType<Candidate[]>,
+      required: true
+    },
+    canShowActions: {
+      type: Boolean,
+      required: false
+    }
   },
   setup (props, { emit }) {
-
-
+    // const candidate = 'Candidate'
+    const AddCandidateDialogRef = ref(null)
+    const deleteDialogRef = ref(null)
+    const filter = ref('')
     const columns = computed(
       () => {
         const allColumns = [
@@ -106,7 +132,11 @@ export default defineComponent({
     return {
       columns,
       rows,
-      showActions
+      showActions,
+      AddCandidateDialogRef,
+      deleteDialogRef,
+      refetchcandidates,
+      filter
     }
   }
 })
