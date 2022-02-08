@@ -60,6 +60,10 @@
 <script lang='ts'>
 
 import { defineComponent, ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+import { useFetchCandidates } from 'src/hooks/useFetchCandidates'
+import { useReviewMutations, useReviewUpdateMutations } from 'src/hooks/useReviewMutations'
 
 import ReviewInputData from 'src/interfaces/classes/ReviewInputData'
 import PaginationInputData from 'src/interfaces/classes/PaginationInputData'
@@ -103,6 +107,40 @@ export default defineComponent({
       open.value = true
     }
 
+    const editReview = (review : Review) => {
+      if (review) {
+        console.log('thats my review', review)
+        createdReviewData.value.internId = review.intern.id
+        createdReviewData.value.supervisorId = review.supervisor.id
+        fullName.value = review.intern.fullname
+        supervisorName.value = review.supervisor.name
+        // console.log('WAS SENT is', row)
+        // console.log('let me check the row.id', row.id)
+        createdReviewData.value.initiative = review.initiative
+        createdReviewData.value.cooperation = review.cooperation
+        createdReviewData.value.performance = review.performance
+        createdReviewData.value.consistency = review.consistency
+        createdReviewData.value.total = review.total
+        rowId.value = review.id
+      }
+      open.value = true
+    }
+
+    const getShortDate = (date: Date) => {
+      return `${date.getFullYear()}-${date.getMonth() + 1 > 9 ? '' : '0'}${date.getMonth() + 1}-${date.getDate() > 9 ? '' : '0'}${date.getDate()}`
+    }
+
+    const getShortTime = (date: Date) => {
+      return `${date.getHours() > 9 ? '' : '0'}${date.getHours()}:${date.getMinutes() > 9 ? '' : '0'}${date.getMinutes()}`
+    }
+
+    const currentDate = getShortDate(new Date())
+    const currentTime = getShortTime(new Date())
+
+    const getCandidatesData = ref<PaginationInputData>({
+      page: 1,
+      limit: 0
+    })
     const { result } = useFetchCandidates(getCandidatesData)
 
     const createdReviewData = ref<ReviewInputData>({
@@ -123,7 +161,44 @@ export default defineComponent({
     useReviewUpdateMutations(createdReviewData.value)
     const $q = useQuasar()
 
-    c
+    const submitAdd = () => {
+      if (rowId.value === '') {
+        createReview().then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully created the review.'
+            })
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          cancelAll()
+        }).catch((err) => {
+          alert(err)
+        })
+      } else {
+        updateReview(rowId.value).then((res) => {
+          if (!res) {
+            $q.notify({
+              type: 'positive',
+              message: 'Successfully updated the review.'
+            })
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: res
+            })
+          }
+          open.value = false
+        }).catch((err) => {
+          alert(err)
+        })
+      }
+    }
+
 
     return {
       open,
@@ -133,7 +208,17 @@ export default defineComponent({
       accepted: ref(false),
       rejected: ref(false),
       standby: ref(false),
-      createdReviewData
+      createdReviewData,
+      submitAdd,
+      result,
+      rowId,
+      createReview,
+      fullName,
+      supervisorName,
+      getShortDate,
+      getShortTime,
+      editReview,
+      getCandidatesData
     }
   }
 })
