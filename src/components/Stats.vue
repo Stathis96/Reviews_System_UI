@@ -59,7 +59,39 @@ export default defineComponent({
     VChart
   },
   setup () {
-  
+    // sksksk
+    const selection = ref(120)
+    const { internsPeriodResult } = useFetchStatsForInternsPerPeriod(selection)
+    const { interviewsPeriodResult } = useFetchStatsForInterviewsPerPeriod(selection)
+
+    // watch(selection, () => {
+    //   console.log('selection value changed to : ', selection.value)
+    // })
+    // const internsPeriodResult = computed(
+    //   () => {
+    //     console.log('selection value: ', selection.value)
+    //     const { internsPeriodResult: internss } = useFetchStatsForInternsPerPeriod(selection)
+    //     return internss
+    //   })
+
+    // const { internsPeriodResult } = useFetchStatsForInternsPerPeriod(120)
+    // const { interviewsPeriodResult } = useFetchStatsForInterviewsPerPeriod(120)
+    // const { interviewsPeriodResult: oneMonth } = useFetchStatsForInterviewsPerPeriod(1)
+    // const { interviewsPeriodResult: sixMonth } = useFetchStatsForInterviewsPerPeriod(6)
+    // const { interviewsPeriodResult: oneYear } = useFetchStatsForInterviewsPerPeriod(12)
+
+    // const interviewsPeriodResult = computed(
+    //   () => {
+    //     console.log('selection value: ', selection.value)
+    //     const { interviewsPeriodResult: interviewss } = useFetchStatsForInterviewsPerPeriod(selection)
+    //     return interviewss
+    //   })
+    // const { internsPeriodResult: forOneMonth } = useFetchStatsForInternsPerPeriod(1)
+    // const { internsPeriodResult: forSixMonth } = useFetchStatsForInternsPerPeriod(6)
+    // const { internsPeriodResult: forOneYear } = useFetchStatsForInternsPerPeriod(12)
+
+    // const { interviewsPeriodResult: oneMonth } = useFetchStatsForInterviewsPerPeriod(selectedMonth)
+
     const interns = ref(
       {
         tooltip: {
@@ -166,3 +198,25 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+.font{
+  font-family: 'Bebas Neue', cursive;
+}
+
+.box {
+  box-shadow:
+  0 2px 1.4px rgba(0, 0, 0, 0.034),
+  0 6px 4.6px rgba(0, 0, 0, 0.048),
+  0 10px 8.5px rgba(0, 0, 0, 0.06);
+  align-self: center;
+  background: white;
+  width: 600px;
+  border-radius: 15px;
+}
+
+#p6 {background-color:hsla(290,60%,70%,0.3);}
+#p5 {background-color:hsla(290,100%,50%,0.3);}
+</style>
