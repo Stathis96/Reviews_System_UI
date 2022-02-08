@@ -50,13 +50,47 @@ export default defineComponent({
     const cancelAll = () => {
       open.value = false
     }
-    
+    // console.log('CHECK if Neededid is the same as above', neededId.value)
+    const { deleteInterview } = useInterviewDeleteMutations()
+    const { deleteIntern } = useInternDeleteMutations()
+    const { deleteCandidate } = useCandidateDeleteMutations()
+    const { deleteReview } = useReviewDeleteMutations()
+    const $q = useQuasar()
+
+    const submitDelete = () => {
+      if (props.typeOfProp === 'Interview') {
+        deleteInterview(neededId.value).then((res) => {
+          console.log('response is ', res)
+        }).catch((err) => {
+          alert(err)
+        })
+      } else if (props.typeOfProp === 'Intern') {
+        deleteIntern(neededId.value).then((res) => {
+        }).catch((err) => {
+          alert(err)
+        })
+      } else if (props.typeOfProp === 'Review') {
+        deleteReview(neededId.value).then((res) => {
+        }).catch((err) => {
+          alert(err)
+        })
+      } else {
+        deleteCandidate(neededId.value).then((res) => {
+        }).catch((err) => {
+          alert(err)
+        })
+      }
+    }
 
     return {
       open,
       openDialog,
       cancelAll,
-      deleteInterview
+      deleteInterview,
+      deleteIntern,
+      deleteCandidate,
+      submitDelete,
+      neededId
     }
   }
 })
