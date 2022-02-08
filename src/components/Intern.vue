@@ -8,6 +8,11 @@
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5 class="tableletters">Name : {{result?.fullname}}</h5>
+                                    <h6 class="buttons">Current Role : {{result?.position}}</h6>
+                                    <h6 class="buttons">Current Status : {{result?.internStatus}}</h6>
+                        </div>
                     </div>
                     <div v-if="result?.internStatus === 'ACTIVE'" class="col-md-6">
                         <input type="button" class="profile-edit-btn q-mb-md" name="btnAddMore" value="Add Review" @click="reviewDialogRef.openDialog(result) "/>
@@ -116,16 +121,61 @@
             />
             </div>
         </div>
+           <ReviewDialog ref="reviewDialogRef" @refetchreviews="fetchIntern"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import moment from 'moment'
+
+import { useFetchInternById } from 'src/hooks/useFetchInterns'
+
+import ReviewDialog from '../components/ReviewDialog.vue'
+import ReviewItem from '../components/ReviewItem.vue'
 
 export default defineComponent({
   name: 'Intern',
   components: {
+    ReviewDialog,
+    ReviewItem
   },
   setup () {
+    // sksks
+    const router = useRoute()
+
+    const currentIntern = router.params.id as string
+    const reviewDialogRef = ref(null)
+
+    const { result, fetchIntern } = useFetchInternById(currentIntern)
+    const showRevs = ref(false)
+
+    console.log('current intern is ', result)
+
+    // const firsttry = result.value?.academicYear
+    // console.log('result is ', result)
+    // const res = () => {
+    //   return result.value?.academicYear
+    // }
+    // console.log('res', res)
+
+    // const year = computed(
+    //   () => {
+    //     console.log(firsttry)
+    //     return new Date(firsttry as Date).toDateString()
+    //   })
+    // console.log('we made ', year.value)
+
+    //   field: (row: Interview) => {
+    //           const interview = rows.value.find((c) => c.id === row.id)
+    //           const stime = new Date(interview?.startTime as Date)
+    //           return stime.toDateString()
+    //         }
+
+    const apot = () => {
+      showRevs.value = !showRevs.value
+    //   console.log('CHECKING NOW', result.value)
+    }
 
     const wholeReviews = computed(
       () => {
@@ -136,7 +186,13 @@ export default defineComponent({
 
     return {
       result,
-      currentIntern
+      currentIntern,
+      fetchIntern,
+      reviewDialogRef,
+      apot,
+      showRevs,
+      wholeReviews,
+      moment
     }
   }
 
