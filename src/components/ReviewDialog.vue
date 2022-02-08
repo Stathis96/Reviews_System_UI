@@ -169,6 +169,9 @@ export default defineComponent({
               type: 'positive',
               message: 'Successfully created the review.'
             })
+            // console.log('rowId', rowId.value)
+            // console.log('CREATEDreviewdata from inside submit is ', createdReviewData)
+            emit('refetchreviews') // handled in Intern
           } else {
             $q.notify({
               type: 'negative',
@@ -186,19 +189,34 @@ export default defineComponent({
               type: 'positive',
               message: 'Successfully updated the review.'
             })
+            // console.log('rowId is', rowId.value)
+            // console.log('UPDATEDdata from inside is ', createdReviewData)
+            emit('refetchreviews')
           } else {
             $q.notify({
               type: 'negative',
               message: res
             })
           }
+          // emit('refetchinterviews2')
+          // emit('refetchpendinginterviews')
+          // cancelAll()
           open.value = false
         }).catch((err) => {
           alert(err)
         })
       }
     }
-
+    const cancelAll = () => {
+      open.value = false
+      createdReviewData.value.internId = ''
+      createdReviewData.value.initiative = 1
+      createdReviewData.value.cooperation = 1
+      createdReviewData.value.consistency = 1
+      createdReviewData.value.performance = 1
+      createdReviewData.value.total = 1
+      // createdReviewData.value.createdAt = ''
+    }
 
     return {
       open,
