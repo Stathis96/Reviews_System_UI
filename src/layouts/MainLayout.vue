@@ -11,7 +11,11 @@
           @click="toggleLeftDrawer"
         />
 
-       
+        <q-toolbar-title>
+          Review System
+        </q-toolbar-title>
+
+          <!-- v-if="getUser !== null" -->
         <q-btn
           flat
           icon="logout"
@@ -113,6 +117,16 @@ const linksListForInterviews = [
     title: 'Scheduled/Old Interviews',
     icon: 'reviews',
     link: '/interviews'
+  },
+  {
+    title: 'All Interviews By Status',
+    icon: 'pending_actions',
+    link: '/pending'
+  },
+  {
+    title: 'All Registered Candidates',
+    icon: 'groups',
+    link: '/candidates'
   }
 ]
 const linksListForInterns = [
@@ -120,6 +134,11 @@ const linksListForInterns = [
     title: 'New/Old Interns',
     icon: 'person',
     link: '/oldnew'
+  },
+  {
+    title: 'All Interns',
+    icon: 'person',
+    link: '/allinterns'
   }
 ]
 const linksListForHistory = [
@@ -149,7 +168,25 @@ export default defineComponent({
   },
 
   setup () {
-        const leftDrawerOpen = ref(false)
+    const user = ref({ sub: '', name: '', email: '' })
+    const store = usersStore()
+    onMounted(() => {
+      // console.log('did i log?')
+      authService.getProfile()
+        .then((res) => {
+          // console.log('res from app vue is', res)
+          // user.value = res as AuthUser
+          user.value = store.$state.user
+          if (res == null) {
+            authService.login()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+
+    const leftDrawerOpen = ref(false)
 
     return {
       essentialLinksForInterviews: linksListForInterviews,
