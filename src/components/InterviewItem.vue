@@ -180,6 +180,23 @@ export default defineComponent({
         return props.interviews
       }
     )
+    // const y = ref(rows.value.every((interview) => interview.status === 'pending'))
+
+    const showActions = computed(
+      () => {
+        return props.canShowActions !== undefined ? props.canShowActions : false
+        // if (props.canShowActions !== false or undefined or null) {
+        //   console.log('showactions on if :', props.canShowActions)
+        //   return props.canShowActions
+        // } else {
+        //   console.log('showactions on else:', props.canShowActions)
+        //   return props.canShowActions
+        // }
+      }
+    )
+    const refetchinterviews = () => {
+      emit('refetchinterviews')
+    }
 
     return {
       filter,
