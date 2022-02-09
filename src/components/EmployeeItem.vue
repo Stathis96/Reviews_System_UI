@@ -33,6 +33,13 @@
           </q-td>
         </template>
 
+      <!-- Making row clickable and passing id to use for router -->
+      <template v-slot:body-cell="props">
+        <q-td :props="props" class="cursor-pointer" @click="moveToLink(props.row)" title="Click to check intern's details">
+          {{ props.value }}
+        </q-td>
+      </template>
+
           <template v-slot:body-cell-internStatus="props">
             <q-td :props="props" @click="changeStatus()">
                 <q-chip
@@ -47,10 +54,19 @@
 
     </q-table>
   </div>
+  <AddInternDialog ref="AddInternDialogRef" @refetchpendinginterviews="refetchinterviews"/>
+  <DeleteDialog ref="deleteDialogRef"
+   :typeOfProp="'Intern'"
+   @refetching="refetchinterviews" />
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import DeleteDialog from '../components/DeleteDialog.vue'
+import AddInternDialog from '../components/AddInternDialog.vue'
+import Intern from 'src/interfaces/Intern'
 
 import moment from 'moment'
 
@@ -58,11 +74,26 @@ export default defineComponent({
   name: 'EmployeeItem',
   emits: ['refetchinterviews'],
   components: {
+    DeleteDialog,
+    AddInternDialog
   },
   props: {
+    interns: {
+      type: [Object] as PropType<Intern[]>,
+      required: true
+    },
+    canShowActions: {
+      type: Boolean,
+      required: false
+    }
   },
   setup (props, { emit }) {
+    // sksks
+    const router = useRouter()
+    const filter = ref('')
 
+    const deleteDialogRef = ref(null)
+    const AddInternDialogRef = ref(null)
     const columns = computed(
       () => {
         const allColumns = [
@@ -171,11 +202,29 @@ export default defineComponent({
       }
     )
 
+    const moveToLink = async (row:Intern) => {
+      // console.log('whole row element', row)
+      // console.log('just the id', row.id)
+      await router.push({ name: 'Intern', params: { id: row.id } })
+    }
+
+    const changeStatus = () => {
+      console.log('i ve been clicked')
+    }
+    const refetchinterviews = () => {
+      emit('refetchinterviews')
+    }
 
     return {
       columns,
-      rows
-
+      rows,
+      refetchinterviews,
+      moveToLink,
+      deleteDialogRef,
+      AddInternDialogRef,
+      showActions,
+      filter,
+      changeStatus
     }
   }
 })
