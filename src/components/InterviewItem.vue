@@ -8,6 +8,14 @@
       dark
       bordered
     >
+      <!-- class="bg-light-blue-5" -->
+      <template v-slot:top-right>
+        <q-input dense debounce="300" v-model="filter" placeholder="Search" class="bg-light-blue-2" filled >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
 
         <template v-slot:body-cell-selectActions="send">
           <q-td  class="flex flex-center">
@@ -40,22 +48,41 @@
 
     </q-table>
   </div>
+   <AddDialog ref="addDialogRef" @refetchpendinginterviews="refetchinterviews"/>
+   <DeleteDialog ref="deleteDialogRef" @refetching="refetchinterviews"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from 'vue'
+import moment from 'moment'
 
+import Interview from '../interfaces/Interview'
+
+import AddDialog from '../components/AddDialog.vue'
+import DeleteDialog from '../components/DeleteDialog.vue'
 
 export default defineComponent({
   name: 'InterviewItem',
   emits: ['refetchinterviews'],
   components: {
+    AddDialog,
+    DeleteDialog
   },
   props: {
+    interviews: {
+      type: [Object] as PropType<Interview[]>,
+      required: true
+    },
+    canShowActions: {
+      type: Boolean,
+      required: false
+    }
   },
   setup (props, { emit }) {
-
-
+    // sksks
+    const addDialogRef = ref(null)
+    const deleteDialogRef = ref(null)
+    const filter = ref('')
     // const columns = [
     //   {
     //     name: 'candidate',
@@ -157,8 +184,11 @@ export default defineComponent({
     return {
       filter,
       columns,
-      rows
-
+      rows,
+      showActions,
+      addDialogRef,
+      deleteDialogRef,
+      refetchinterviews
     }
   }
 })
