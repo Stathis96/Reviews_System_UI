@@ -7,6 +7,7 @@ import { createCandidateMutation, deleteCandidateMutation, updateCandidateMutati
 import CandidateInputData from 'src/interfaces/classes/CandidateInputData'
 import Candidate from 'src/interfaces/Candidate'
 
+let errors = ''
 export function useCandidateMutations (variables: CandidateInputData) {
   const result = ref<Candidate>()
   const loading = ref(false)
@@ -36,6 +37,11 @@ export function useCandidateMutations (variables: CandidateInputData) {
 
       if (response.data.data) {
         result.value = response.data.data.createCandidate
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
       }
     } catch (e) {
       console.log(e)
