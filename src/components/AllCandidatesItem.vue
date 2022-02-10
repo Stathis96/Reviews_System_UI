@@ -61,6 +61,51 @@ export default defineComponent({
     }
   },
   setup (props, { emit }) {
+    // sksks
+    const pagination = computed(() => {
+      return props.propPagination
+    })
+    const filter = ref('')
+    // const pagination = ref(
+    //   props.propPagination ? props.propPagination : { page: 1, limit: 10 })
+
+    // const pagination = ref({
+    //   page: 1,
+    //   rowsPerPage: 5,
+    //   rowsNumber: 20
+    // })
+
+    // console.log('props pagination IS THIS', props.propPagination)
+
+    // watch(props.propPagination, () => {
+    //   console.log('mpainei pote?')
+    //   console.log('props pagination : ', props.propPagination)
+
+    //   if (props.propPagination.page !== 0) {
+    //     console.log('mpainei pote mesa sto if?')
+    //     pagination.value.page = props.propPagination.page
+    //     pagination.value.rowsPerPage = props.propPagination.limit
+    //   }
+    // })
+
+    // watch(() => props.propPagination, () => {
+    //   console.log('mpainei pote?')
+    //   if (props.propPagination !== undefined) {
+    //     console.log('from inside watcher', props.propPagination)
+    //     pagination.value.page = props.propPagination.page
+    //     pagination.value.rowsPerPage = props.propPagination.limit
+    //     console.log('pagination page', pagination.value.page)
+    //     console.log('pagination rowsPerPage', pagination.value.rowsPerPage)
+    //     // pagination.value.rowsNumber = props.propPagination.
+    //   }
+    // })
+
+    const onRequest = (payload: { pagination: { page: number, rowsPerPage: number}, filter: string }) => {
+      // console.log('payload is ', payload)
+      // console.log('filter is ', filter)
+      emit('fetchingPaginatedData', payload.pagination.page, payload.pagination.rowsPerPage, filter)
+    }
+
     const AddCandidateDialogRef = ref(null)
     const deleteDialogRef = ref(null)
 
@@ -117,7 +162,10 @@ export default defineComponent({
       showActions,
       AddCandidateDialogRef,
       deleteDialogRef,
-      refetchcandidates
+      refetchcandidates,
+      pagination,
+      onRequest,
+      filter
     }
   }
 })
