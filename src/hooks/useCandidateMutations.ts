@@ -104,4 +104,43 @@ export function useCandidateUpdateMutations (variables: CandidateInputData) {
     loading
   }
 }
+
+export function useCandidateDeleteMutations () {
+  const result = ref<void>()
+  const loading = ref(false)
+
+  const deleteCandidate = async (id: string) => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(deleteCandidateMutation),
+          variables: {
+            // data: variables
+            deleteCandidateId: id
+          }
+        }
+      }) as unknown as GraphQLResponse <{ deleteCandidate: void}>
+
+      if (response.data.data) {
+        result.value = response.data.data.deleteCandidate
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    deleteCandidate,
+    result,
+    loading
+  }
 }
