@@ -10,6 +10,14 @@
       dark
     >
 
+      <template v-slot:top-right>
+        <q-input dense debounce="300" v-model="filter" placeholder="Search" class="bg-light-blue-2" filled >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+
         <template v-slot:body-cell-selectActions="send">
           <q-td  class="flex flex-center">
             <q-btn color="primary" icon="settings" >
@@ -26,6 +34,19 @@
             </q-btn>
           </q-td>
         </template>
+
+          <template v-slot:body-cell-status="props">
+            <q-td :props="props">
+                <q-chip
+                  :color="props.row.status == 'ACCEPTED' ? 'green': props.row.status == 'REJECTED' ? 'red' : props.row.status == 'PENDING' ? 'orange' : 'purple'"
+                  text-color="white"
+                  dense
+                  class="text-weight-bolder"
+                  square
+                >{{props.row[props.col.name]}}</q-chip>
+            </q-td>
+          </template>
+
     </q-table>
   </div>
    <AddCandidateDialog ref="AddCandidateDialogRef" @refetchupdatedcandidates="refetchcandidates"/>
@@ -57,6 +78,10 @@ export default defineComponent({
     },
     canShowActions: {
       type: Boolean,
+      required: false
+    },
+    propPagination: {
+      type: Object as PropType<PaginationInputData>,
       required: false
     }
   },
