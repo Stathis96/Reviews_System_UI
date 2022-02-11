@@ -112,3 +112,42 @@ export function useInternUpdateMutations (variables: InternInputData) {
   }
 }
 
+export function useInternDeleteMutations () {
+  const result = ref<void>()
+  const loading = ref(false)
+
+  const deleteIntern = async (id: string) => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(deleteInternMutation),
+          variables: {
+            // data: variables
+            deleteInternId: id
+          }
+        }
+      }) as unknown as GraphQLResponse <{ deleteIntern: void}>
+
+      if (response.data.data) {
+        result.value = response.data.data.deleteIntern
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    deleteIntern,
+    result,
+    loading
+  }
+}
