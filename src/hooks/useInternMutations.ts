@@ -59,3 +59,56 @@ export function useInternMutations (variables: InternInputData) {
     loading
   }
 }
+
+export function useInternUpdateMutations (variables: InternInputData) {
+  const result = ref<Intern>()
+  const loading = ref(false)
+
+  const updateIntern = async (updateInternId: string) => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(updateInternMutation),
+          variables: {
+            // data: variables
+            createInternData: {
+              fullname: variables.fullname,
+              supervisorId: variables.supervisorId,
+              email: variables.email,
+              dateOfBirth: variables.dateOfBirth,
+              position: variables.position,
+              school: variables.school,
+              academicYear: variables.academicYear,
+              hiredAt: variables.hiredAt,
+              endInternship: variables.endInternship,
+              internStatus: variables.internStatus
+            },
+            updateInternId: updateInternId
+          }
+        }
+      }) as unknown as GraphQLResponse <{ updateIntern: Intern}>
+
+      if (response.data.data) {
+        result.value = response.data.data.updateIntern
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    updateIntern,
+    result,
+    loading
+  }
+}
+
