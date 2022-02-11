@@ -110,3 +110,44 @@ export function useInterviewUpdateMutations (variables: InterviewInputData) {
   }
 }
 
+export function useInterviewDeleteMutations () {
+  const result = ref<void>()
+  const loading = ref(false)
+
+  const deleteInterview = async (id: string) => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(deleteInterviewMutation),
+          variables: {
+            // data: variables
+            deleteInterviewId: id
+          }
+        }
+      }) as unknown as GraphQLResponse <{ deleteInterview: void}>
+
+      if (response.data.data) {
+        result.value = response.data.data.deleteInterview
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
+        // return (response.data.errors[0] as unknown as Error).message
+        // result.value = response.data.errors as unknown as void
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    deleteInterview,
+    result,
+    loading
+  }
+}
