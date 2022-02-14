@@ -107,3 +107,42 @@ export function useReviewUpdateMutations (variables: ReviewInputData) {
   }
 }
 
+export function useReviewDeleteMutations () {
+  const result = ref<void>()
+  const loading = ref(false)
+
+  const deleteReview = async (id: string) => {
+    try {
+      loading.value = true
+      const response = await api({
+        url: '',
+        method: 'post',
+        data: {
+          query: print(deleteReviewMutation),
+          variables: {
+            // data: variables
+            deleteReviewId: id
+          }
+        }
+      }) as unknown as GraphQLResponse <{ deleteReview: void}>
+
+      if (response.data.data) {
+        result.value = response.data.data.deleteReview
+      }
+      if (response.data.errors) {
+        console.log('show me the errors', (response.data.errors[0] as unknown as Error).message)
+        errors = (response.data.errors[0] as unknown as Error).message
+        return errors
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    deleteReview,
+    result,
+    loading
+  }
+}
